@@ -1,12 +1,22 @@
-import './App.css';
-import BookList from './BookList.tsx';
+import { BrowserRouter as Router, Route, Routes } from 'react-router-dom';
+import BookPage from './pages/BookPage';
+import BuyPage from './pages/BuyPage';
+import CartPage from './pages/CartPage';
+import CartSummary from './components/CartSummary';
+import { CartProvider } from './context/CartContext';
 
 function App() {
   return (
-    <>
-      {/* Main view */}
-      <BookList />
-    </>
+    <CartProvider>  
+      <Router>
+        <CartSummary />
+        <Routes>
+          <Route path="/" element={<BookPage />} />
+          <Route path="/add/:bookId/:bookName/:bookPrice" element={<BuyPage />} />
+          <Route path="/cart" element={<CartPage />} />
+        </Routes>
+      </Router>
+    </CartProvider>
   );
 }
 

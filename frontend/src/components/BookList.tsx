@@ -1,8 +1,10 @@
 import { useEffect, useState } from 'react';
-import type { Book, BooksResponse } from '../types/Book';
+import type { Book } from '../types/Book';
 import { useNavigate } from 'react-router-dom';
 import '../styles/BookList.css';
 import type { SortableColumn } from './SortControls';
+import BookPagination from './BookPagination';
+import { fetchBooks } from '../api/ProjectAPI';
 
 type ProjectListProps = {
   selectedCategories: string[];
@@ -27,32 +29,36 @@ function BookList({
   const [totalItems, setTotalItems] = useState<number>(0);
   const [totalPages, setTotalPages] = useState<number>(0);
   const navigate = useNavigate();
+  const [ error, setError ] = useState<string | null>(null);
+  const [ loading, setLoading ] = useState<boolean>(false);
 
   // Fetch current books
   useEffect(() => {
-    const fetchBooks = async () => {
-      const categoryParams = selectedCategories
-        .map((cat) => `Categorytypes=${encodeURIComponent(cat)}`)
-        .join('&');
-
-      const response = await fetch(
-        `https://localhost:5001/Book/AllBooks?BookQty=${pageSize}&PageNum=${pageNum}${categoryParams ? `&${categoryParams}` : ''}`,
-      );
-      const data: BooksResponse = await response.json();
-      setBooks(data.books);
-      setTotalItems(data.totalNumBooks);
-      setTotalPages(Math.ceil(data.totalNumBooks / pageSize));
+    const loadBooks = async () => {
+     try{
+        setLoading(true);
+        const data = await fetchBooks(pageSize, pageNum, selectedCategories);
+        setBooks(data.books);
+        setTotalItems(data.totalNumBooks);
+        setTotalPages(Math.ceil(data.totalNumBooks / pageSize));
+     } catch (err) {
+        setError((err as Error).message || 'An error occurred while fetching books.');
+     } finally {
+        setLoading(false);  
+     }
     };
 
-    fetchBooks();
+    void loadBooks();
   }, [pageSize, pageNum, selectedCategories]);
 
-  // Clamp invalid pages
-  useEffect(() => {
-    if (pageNum > (totalPages || 1)) {
-      setPageNum(totalPages || 1);
-    }
-  }, [pageNum, totalPages, setPageNum]);
+  if (loading) {
+    return <p className="book-list__loading">Loading books...</p>;
+  }
+
+  if (error) {
+    return <p className="book-list__error">{error}</p>;
+  }
+
 
   // Sort visible books
   const displayedBooks = [...books].sort((a, b) => {
@@ -105,56 +111,14 @@ function BookList({
         ))}
       </div>
 
-      <div className="book-list__meta">
-        <p className="book-list__status">
-          Showing page {pageNum} of {totalPages || 1} ({totalItems} books)
-        </p>
-        <nav aria-label="Book list pages" className="book-list__pagination">
-          <ul className="pagination mb-0">
-            <li className={`page-item ${pageNum === 1 ? 'disabled' : ''}`}>
-              <button className="page-link" onClick={() => setPageNum(pageNum - 1)}>
-                Previous
-              </button>
-            </li>
-            {[...Array(totalPages)].map((_, index) => (
-              <li
-                key={index + 1}
-                className={`page-item ${pageNum === index + 1 ? 'active' : ''}`}
-              >
-                <button className="page-link" onClick={() => setPageNum(index + 1)}>
-                  {index + 1}
-                </button>
-              </li>
-            ))}
-            <li className={`page-item ${pageNum === totalPages ? 'disabled' : ''}`}>
-              <button className="page-link" onClick={() => setPageNum(pageNum + 1)}>
-                Next
-              </button>
-            </li>
-          </ul>
-        </nav>
-      </div>
-
-      <div className="book-list__page-size">
-        <label htmlFor="pageSize" className="book-list__page-size-label">
-          Results Per Page:
-        </label>
-        <select
-          id="pageSize"
-          className="book-list__page-size-select"
-          value={pageSize}
-          onChange={(e) => {
-            // Reset to first page
-            setPageSize(Number(e.target.value));
-            setPageNum(1);
-          }}
-        >
-          <option value="8">8</option>
-          <option value="5">5</option>
-          <option value="10">10</option>
-          <option value="20">20</option>
-        </select>
-      </div>
+      <BookPagination
+        totalItems={totalItems}
+        totalPages={totalPages}
+        pageNum={pageNum}
+        pageSize={pageSize}
+        setPageNum={setPageNum}
+        setPageSize={setPageSize}
+      />
     </div>
   );
 }

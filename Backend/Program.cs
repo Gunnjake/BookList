@@ -16,12 +16,16 @@ builder.Services.AddOpenApi();
 builder.Services.AddDbContext<BookDbContext>(options =>
     options.UseSqlite(builder.Configuration.GetConnectionString("WaterConnection")));
 
-// Allow frontend requests
-builder.Services.AddCors();
+builder.Services.AddCors(options =>
+    options.AddPolicy("AllowREactApp",
+    policy =>
+    {
+        policy.WithOrigins("http://localhost:3000")
+            .AllowAnyHeader()
+            .AllowAnyMethod();
+    }));
 
-// Create app pipeline
 var app = builder.Build();
-
 // Configure the HTTP request pipeline.
 if (app.Environment.IsDevelopment())
 {
@@ -30,7 +34,7 @@ if (app.Environment.IsDevelopment())
 }
 
 // Allow local frontend
-app.UseCors(x => x.WithOrigins("http://localhost:3000"));
+app.UseCors("AllowREactApp");
 
 // Redirect to HTTPS
 app.UseHttpsRedirection();

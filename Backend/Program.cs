@@ -16,7 +16,12 @@ builder.Services.AddCors(options =>
     options.AddPolicy("AllowREactApp",
     policy =>
     {
-        policy.WithOrigins("http://localhost:3001")
+        policy.WithOrigins(
+                "http://localhost:3000",
+                "http://localhost:3001",
+                "http://localhost:5173",
+                "https://white-dune-0a653bc03.1.azurestaticapps.net"
+            )
             .AllowAnyHeader()
             .AllowAnyMethod();
     }));

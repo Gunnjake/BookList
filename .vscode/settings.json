@@ -1,0 +1,4 @@
+{
+    "appService.defaultWebAppToDeploy": "/subscriptions/86b24bf2-5c7d-495d-ac7f-5ab9d890598f/resourceGroups/appsvc_windows_francecentral/providers/Microsoft.Web/sites/BookList",
+    "appService.deploySubpath": "Backend\\publish"
+}

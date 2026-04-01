@@ -1,11 +1,12 @@
 import type { Book } from "../types/Book";
+import { getApiBaseUrl } from "./apiConfig";
 
 interface FetchBooksResponse {
     books: Book[];
     totalNumBooks: number;
 }
 
-const API_BASE_URL = 'https://localhost:5001/book';
+const API_BASE_URL = `${getApiBaseUrl()}/book`;
 
 // Fetch paged books
 export const fetchBooks = async (

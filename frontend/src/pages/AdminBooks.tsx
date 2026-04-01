@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react';
+import { useCallback, useEffect, useState } from 'react';
 import type { Book } from '../types/Book';
 import { addBook, deleteBook, fetchBooks, updateBook } from '../api/ProjectAPI';
 import BookPagination from '../components/BookPagination';
@@ -19,7 +19,7 @@ function AdminBooks() {
   const [editingBook, setEditingBook] = useState<Book | null>(null);
 
   // Fetch admin books
-  const loadBooks = async () => {
+  const loadBooks = useCallback(async () => {
     try {
       setLoading(true);
       setError(null);
@@ -32,11 +32,11 @@ function AdminBooks() {
     } finally {
       setLoading(false);
     }
-  };
+  }, [pageSize, pageNum]);
 
   useEffect(() => {
     void loadBooks();
-  }, [pageSize, pageNum]);
+  }, [loadBooks]);
 
   // Clamp invalid pages
   useEffect(() => {
@@ -47,16 +47,26 @@ function AdminBooks() {
 
   // Add new book
   const handleAddBook = async (book: Book) => {
-    await addBook(book);
-    setIsAdding(false);
-    await loadBooks();
+    try {
+      setError(null);
+      await addBook(book);
+      setIsAdding(false);
+      await loadBooks();
+    } catch (err) {
+      setError((err as Error).message || 'Failed to add book.');
+    }
   };
 
   // Save edited book
   const handleEditBook = async (book: Book) => {
-    await updateBook(book);
-    setEditingBook(null);
-    await loadBooks();
+    try {
+      setError(null);
+      await updateBook(book);
+      setEditingBook(null);
+      await loadBooks();
+    } catch (err) {
+      setError((err as Error).message || 'Failed to update book.');
+    }
   };
 
   // Confirm before deleting
@@ -65,8 +75,13 @@ function AdminBooks() {
       return;
     }
 
-    await deleteBook(bookId);
-    await loadBooks();
+    try {
+      setError(null);
+      await deleteBook(bookId);
+      await loadBooks();
+    } catch (err) {
+      setError((err as Error).message || 'Failed to delete book.');
+    }
   };
 
   return (
@@ -109,6 +124,10 @@ function AdminBooks() {
 
                 {!loading && !error && (
                   <div className="book-list">
+                    {books.length === 0 ? (
+                      <p className="book-list__status">No books found.</p>
+                    ) : (
+                      <>
                     <div className="table-responsive bg-white border rounded">
                       <table className="table table-striped table-hover mb-0 align-middle">
                         <thead className="table-light">
@@ -167,6 +186,8 @@ function AdminBooks() {
                       setPageNum={setPageNum}
                       setPageSize={setPageSize}
                     />
+                      </>
+                    )}
                   </div>
                 )}
               </>

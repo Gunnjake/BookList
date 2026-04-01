@@ -1,3 +1,4 @@
+// Stored cart item
 export interface CartItem {
     bookId: number;
     title: string;

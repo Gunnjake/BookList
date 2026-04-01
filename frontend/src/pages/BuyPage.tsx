@@ -8,6 +8,7 @@ function BuyPage() {
     const { bookName, bookId, bookPrice } = useParams();
     const { addToCart } = useCart();
 
+    // Build cart item
     const handleAddToCart = () => {
         const newItem: CartItem = {
             bookId: Number(bookId),
@@ -16,6 +17,7 @@ function BuyPage() {
             quantity: 1,
         };
         addToCart(newItem);
+        // Send user to cart
         navigate("/cart");
     };
 

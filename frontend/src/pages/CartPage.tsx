@@ -6,6 +6,7 @@ import '../styles/CartPage.css';
 function CartPage() {
     const navigate = useNavigate();
     const { cart, removeFromCart, clearCart } = useCart();
+    // Calculate current subtotal
     const subtotal = cart.reduce((sum, item) => sum + item.price * item.quantity, 0);
 
     return(
@@ -17,6 +18,7 @@ function CartPage() {
                     <p className="cart-page__empty">Your cart is empty.</p>
                 ) : ( 
                     <ul className="cart-page__list">
+                        {/* Render cart items */}
                         {cart.map((item: CartItem) => (
                             <li key={item.bookId} 
                             className="cart-page__item">

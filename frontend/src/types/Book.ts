@@ -1,3 +1,4 @@
+// Book API shape
 export interface Book {
   bookId: number;
   title: string;
@@ -10,6 +11,7 @@ export interface Book {
   price: number;
 }
 
+// Paged books response
 export interface BooksResponse {
   books: Book[];
   totalNumBooks: number;

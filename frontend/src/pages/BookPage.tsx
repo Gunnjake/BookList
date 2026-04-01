@@ -14,6 +14,7 @@ type BookPageState = {
   pageNum?: number;
 };
 
+// Restore saved filters
 const getSavedBookPageState = (): BookPageState => {
   const savedState = sessionStorage.getItem(BOOK_PAGE_STORAGE_KEY);
   return savedState ? (JSON.parse(savedState) as BookPageState) : {};
@@ -30,12 +31,13 @@ function BookPage() {
     () => getSavedBookPageState().sortOrder ?? 'asc',
   );
   const [pageSize, setPageSize] = useState<number>(
-    () => getSavedBookPageState().pageSize ?? 5,
+    () => getSavedBookPageState().pageSize ?? 8,
   );
   const [pageNum, setPageNum] = useState<number>(
     () => getSavedBookPageState().pageNum ?? 1,
   );
 
+  // Save current page state
   useEffect(() => {
     sessionStorage.setItem(
       BOOK_PAGE_STORAGE_KEY,
@@ -43,6 +45,7 @@ function BookPage() {
     );
   }, [selectedCategories, sortColumn, sortOrder, pageSize, pageNum]);
 
+  // Toggle active sort order
   const handleSort = (column: SortableColumn) => {
     if (sortColumn === column) {
       setSortOrder((current) => (current === 'asc' ? 'desc' : 'asc'));
@@ -68,6 +71,7 @@ function BookPage() {
               <CategoryFilter
                 selectedCategories={selectedCategories}
                 onCheckboxChange={(categories) => {
+                  // Reset after filtering
                   setSelectedCategories(categories ? categories.split(',') : []);
                   setPageNum(1);
                 }}

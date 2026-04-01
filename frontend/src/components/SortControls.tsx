@@ -20,6 +20,7 @@ type SortControlsProps = {
 function SortControls({ sortColumn, sortOrder, onSort }: SortControlsProps) {
   const [isOpen, setIsOpen] = useState(false);
 
+  // Display sort names
   const sortLabelMap: Record<SortableColumn, string> = {
     title: 'Title',
     author: 'Author',
@@ -31,6 +32,7 @@ function SortControls({ sortColumn, sortOrder, onSort }: SortControlsProps) {
     price: 'Price',
   };
 
+  // Close after selection
   const renderSortButton = (label: string, column: SortableColumn) => (
     <button
       type="button"

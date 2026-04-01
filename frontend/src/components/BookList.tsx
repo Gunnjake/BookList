@@ -28,6 +28,7 @@ function BookList({
   const [totalPages, setTotalPages] = useState<number>(0);
   const navigate = useNavigate();
 
+  // Fetch current books
   useEffect(() => {
     const fetchBooks = async () => {
       const categoryParams = selectedCategories
@@ -46,12 +47,14 @@ function BookList({
     fetchBooks();
   }, [pageSize, pageNum, selectedCategories]);
 
+  // Clamp invalid pages
   useEffect(() => {
     if (pageNum > (totalPages || 1)) {
       setPageNum(totalPages || 1);
     }
   }, [pageNum, totalPages, setPageNum]);
 
+  // Sort visible books
   const displayedBooks = [...books].sort((a, b) => {
     const leftValue = a[sortColumn];
     const rightValue = b[sortColumn];
@@ -141,10 +144,12 @@ function BookList({
           className="book-list__page-size-select"
           value={pageSize}
           onChange={(e) => {
+            // Reset to first page
             setPageSize(Number(e.target.value));
             setPageNum(1);
           }}
         >
+          <option value="8">8</option>
           <option value="5">5</option>
           <option value="10">10</option>
           <option value="20">20</option>

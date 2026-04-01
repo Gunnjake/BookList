@@ -12,15 +12,18 @@ const CartContext = createContext<CartContextType | undefined>(undefined);
 const CART_STORAGE_KEY = "bookstore_cart";
 
 export const CartProvider = ({ children }: { children: ReactNode }) => {
+    // Restore saved cart
     const [cart, setCart] = useState<CartItem[]>(() => {
         const storedCart = sessionStorage.getItem(CART_STORAGE_KEY);
         return storedCart ? JSON.parse(storedCart) : [];
     });
 
+    // Save cart changes
     useEffect(() => {
         sessionStorage.setItem(CART_STORAGE_KEY, JSON.stringify(cart));
     }, [cart]);
 
+    // Merge duplicate items
     const addToCart = (item: CartItem) => {
         setCart((prevCart) => {
             const existingItem = prevCart.find((c) => c.bookId === item.bookId);
@@ -33,6 +36,7 @@ export const CartProvider = ({ children }: { children: ReactNode }) => {
         });
     };
 
+    // Remove one quantity
     const removeFromCart = (bookId: number) => {
         setCart((prevCart) =>
             prevCart
@@ -50,6 +54,7 @@ export const CartProvider = ({ children }: { children: ReactNode }) => {
     };
 
     return (
+        // Share cart context
         <CartContext.Provider value={{ cart, addToCart, removeFromCart, clearCart }}>
             {children}
         </CartContext.Provider>
@@ -59,6 +64,7 @@ export const CartProvider = ({ children }: { children: ReactNode }) => {
 export const useCart = () => {
     const context = useContext(CartContext);
     if (!context) {
+        // Guard provider usage
         throw new Error("useCart must be used within a CartProvider");
     }
     return context;

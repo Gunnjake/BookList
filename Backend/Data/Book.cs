@@ -2,6 +2,7 @@
 
 namespace Backend.Data
 {
+    // Book entity model
     public class Book
     {
         [Key]

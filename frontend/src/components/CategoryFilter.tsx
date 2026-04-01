@@ -13,6 +13,7 @@ function CategoryFilter ({
     const [categories, setCategories] = useState<string[]>([]);
     const [isOpen, setIsOpen] = useState(false);
 
+    // Load filter options
     useEffect(() => {
         const fetchCategories = async () => {
             try {
@@ -28,6 +29,7 @@ function CategoryFilter ({
         fetchCategories();
     }, []); 
 
+    // Toggle selected category
     const handleCheckboxChange = ({ target } : { target: HTMLInputElement }) => {
         const updatedCategories = selectedCategories.includes(target.value)
             ? selectedCategories.filter((category) => category !== target.value)

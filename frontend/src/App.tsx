@@ -6,9 +6,11 @@ import CartSummary from './components/CartSummary';
 import { CartProvider } from './context/CartContext';
 
 function App() {
+  // Provide cart state
   return (
     <CartProvider>  
       <Router>
+        {/* Set up routes */}
         <CartSummary />
         <Routes>
           <Route path="/" element={<BookPage />} />

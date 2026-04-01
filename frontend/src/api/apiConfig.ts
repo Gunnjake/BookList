@@ -1,9 +1,7 @@
 const API_BASE_OPTIONS = [
-  'https://localhost:5001',
   'https://booklist-d2crdrepare3ceac.francecentral-01.azurewebsites.net',
+  'https://localhost:5001',
 ] as const;
-
-const LOCAL_HOSTS = new Set(['localhost', '127.0.0.1']);
 
 // Pick active backend
 export const getApiBaseUrl = () => {
@@ -16,11 +14,7 @@ export const getApiBaseUrl = () => {
     return import.meta.env.VITE_API_BASE_URL;
   }
 
-  // Default to Azure outside local dev
-  if (!LOCAL_HOSTS.has(window.location.hostname)) {
-    return API_BASE_OPTIONS[1];
-  }
-
+  // Default to live backend
   return API_BASE_OPTIONS[0];
 };
 

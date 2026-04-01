@@ -6,7 +6,7 @@ interface FetchBooksResponse {
     totalNumBooks: number;
 }
 
-const API_BASE_URL = `${getApiBaseUrl()}/book`;
+const API_BASE_URL = `${getApiBaseUrl()}/Book`;
 
 // Fetch paged books
 export const fetchBooks = async (

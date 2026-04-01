@@ -1,49 +1,36 @@
 using Backend.Data;
 using Microsoft.EntityFrameworkCore;
 
-// Build web app
 var builder = WebApplication.CreateBuilder(args);
 
 // Add services to the container.
 
-// Enable controllers
 builder.Services.AddControllers();
 // Learn more about configuring OpenAPI at https://aka.ms/aspnet/openapi
-// Enable API docs
-builder.Services.AddOpenApi();
 
-// Configure database connection
+
 builder.Services.AddDbContext<BookDbContext>(options =>
-    options.UseSqlite(builder.Configuration.GetConnectionString("WaterConnection")));
+    options.UseSqlite(builder.Configuration.GetConnectionString("BookConnection")));
 
 builder.Services.AddCors(options =>
     options.AddPolicy("AllowREactApp",
     policy =>
     {
-        policy.AllowAnyOrigin()
+        policy.WithOrigins("http://localhost:3001")
             .AllowAnyHeader()
             .AllowAnyMethod();
     }));
 
 var app = builder.Build();
 // Configure the HTTP request pipeline.
-if (app.Environment.IsDevelopment())
-{
-    // Map docs endpoint
-    app.MapOpenApi();
-}
 
-// Allow frontend origins
+
 app.UseCors("AllowREactApp");
 
-// Redirect to HTTPS
 app.UseHttpsRedirection();
 
-// Apply authorization middleware
 app.UseAuthorization();
 
-// Map controller routes
 app.MapControllers();
 
-// Start backend app
 app.Run();

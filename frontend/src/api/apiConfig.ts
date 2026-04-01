@@ -1,5 +1,5 @@
 const API_BASE_OPTIONS = [
-  'https://booklist-d2crdrepare3ceac.francecentral-01.azurewebsites.net',
+  'https://booklist-d2crdrepare3ceac.francecentral-01.azurewebsites.net/Book',
   'https://localhost:5001',
 ] as const;
 
